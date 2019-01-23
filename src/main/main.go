@@ -6,4 +6,8 @@ import (
 
 func main() {
 	fmt.Println("kousuan")
+
+	printpdf(nil, "hello.pdf")
+
+	fmt.Println(" end ")
 }
