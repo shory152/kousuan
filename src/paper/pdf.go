@@ -91,7 +91,7 @@ func getFontPath(fname string) string {
 	return "../font/" + fname
 }
 
-func printpdf(tm []string, fname string) {
+func printpdf(tm []string, title string, fname string) {
 	pdfConf := gopdf.Config{}
 	pdfConf.PageSize = A4Rect()
 	pdf := &gopdf.GoPdf{}
@@ -104,7 +104,7 @@ func printpdf(tm []string, fname string) {
 
 	pdf.AddPage()
 
-	hdrText := "test　测试"
+	hdrText := title
 	printHeader(pdf, hdrText)
 
 	//x := textOffX
@@ -116,7 +116,7 @@ func printpdf(tm []string, fname string) {
 		pdf.SetX(textOffX + float64((i%nCol)*colWidth))
 		pdf.SetY(y)
 
-		fmt.Printf("%d:%d: %f, %f\n", i, ((i + 1) % nCol), pdf.GetX(), pdf.GetY())
+		//fmt.Printf("%d:%d: %f, %f\n", i, ((i + 1) % nCol), pdf.GetX(), pdf.GetY())
 		pdf.Cell(nil, val)
 
 		if (i+1)%nCol == 0 {

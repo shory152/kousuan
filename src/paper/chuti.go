@@ -13,6 +13,13 @@ const (
 	OP_DIV rune = '/'
 )
 
+var validOp map[rune]bool = map[rune]bool{
+	OP_ADD: true,
+	OP_SUB: true,
+	OP_MUL: true,
+	OP_DIV: true,
+}
+
 var op_print map[rune]rune = map[rune]rune{
 	OP_ADD: '＋',
 	OP_SUB: '－',

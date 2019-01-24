@@ -18,7 +18,7 @@ func Test1(t *testing.T) {
 	result := chuti(&tm)
 	fmt.Println(result)
 
-	printpdf(result, "hello.pdf")
+	printpdf(result, "test 测试", "hello.pdf")
 }
 
 func Test2(t *testing.T) {
@@ -32,7 +32,7 @@ func Test2(t *testing.T) {
 	result := chuti(&tm)
 	fmt.Println(result)
 
-	printpdf(result, "hello2.pdf")
+	printpdf(result, "测试二(test2)", "hello2.pdf")
 }
 
 func Test3(t *testing.T) {
@@ -46,5 +46,5 @@ func Test3(t *testing.T) {
 	result := chuti(&tm)
 	fmt.Println(result)
 
-	printpdf(result, "hello3.pdf")
+	printpdf(result, "test3", "hello3.pdf")
 }
