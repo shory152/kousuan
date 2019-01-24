@@ -110,8 +110,29 @@ func sub(n int, max int) string {
 	return result
 }
 
-func (tm *MyCase) DoCase() []string {
+func nDigit(a int) int {
+	str := fmt.Sprintf("%d", a)
+	return len(str)
+}
+
+func opd1fmt(maxSum int) string {
+	nd := nDigit(maxSum)
+	return fmt.Sprintf("%c-%d%c", '%', nd, 'd')
+}
+
+func opd2fmt(maxSum int) string {
+	opd1f := opd1fmt(maxSum)
+	return "%c " + opd1f
+}
+
+func (tm *MyCase) DoCase() ([]string, []string) {
 	var result []string
+	var result2 []string
+	opd1f := opd1fmt(tm.maxSum)
+	opd2f := opd2fmt(tm.maxSum)
+
+	fmt.Printf("opd format: %v,%v\n", opd1f, opd2f)
+
 	for i := 0; i < tm.total; i++ {
 		row := ""
 		maxOpd := tm.maxSum
@@ -130,7 +151,7 @@ func (tm *MyCase) DoCase() []string {
 						opd = rand.Intn(tm.maxAdder + 1)
 					}
 				}
-				row += fmt.Sprintf("%-2d ", opd)
+				row += fmt.Sprintf(opd1f, opd)
 				allOpd = opd
 				lastOpd = opd
 				continue
@@ -139,6 +160,7 @@ func (tm *MyCase) DoCase() []string {
 			// next number
 			op := nextOp
 			tm.CountOp(op)
+			opd2 := 0
 			switch op {
 			case OP_ADD:
 				maxOpd = tm.maxSum - allOpd
@@ -148,8 +170,7 @@ func (tm *MyCase) DoCase() []string {
 				if tm.maxAdder > 0 && maxOpd > tm.maxAdder {
 					maxOpd = tm.maxAdder
 				}
-				opd2 := rand.Intn(maxOpd + 1)
-				row += fmt.Sprintf("%c %-2d ", op_print[OP_ADD], opd2)
+				opd2 = rand.Intn(maxOpd + 1)
 				allOpd += opd2
 				lastOpd = opd2
 
@@ -158,8 +179,10 @@ func (tm *MyCase) DoCase() []string {
 				if maxOpd < 0 {
 					maxOpd = 0
 				}
-				opd2 := rand.Intn(maxOpd + 1)
-				row += fmt.Sprintf("%c %-2d ", op_print[OP_SUB], opd2)
+				if tm.maxAdder > 0 && maxOpd > tm.maxAdder {
+					maxOpd = tm.maxAdder
+				}
+				opd2 = rand.Intn(maxOpd + 1)
 				allOpd -= opd2
 				lastOpd = opd2
 
@@ -176,24 +199,33 @@ func (tm *MyCase) DoCase() []string {
 					maxOpd = tm.maxAdder
 				}
 
-				opd2 := rand.Intn(maxOpd + 1)
-				row += fmt.Sprintf("%c %-2d ", op_print[OP_MUL], opd2)
+				opd2 = rand.Intn(maxOpd + 1)
 				if opd2 != 0 {
 					allOpd /= opd2
 				}
 				lastOpd = opd2
+
+			default:
+				panic(fmt.Sprintf("not support operator: %c", op))
 			}
+
+			row += fmt.Sprintf(opd2f, op_print[op], opd2)
 
 			nextOp = tm.op[rand.Intn(len(tm.op))]
 		}
+
+		r2 := row
 		row += fmt.Sprintf(" %c      ", op_print['='])
+		r2 += fmt.Sprintf(" %c %-5d", op_print['='], allOpd)
 
 		result = append(result, row)
+		result2 = append(result2, r2)
 	}
 
-	return result
+	return result, result2
 }
 
 func chuti(tm *MyCase) []string {
-	return tm.DoCase()
+	r1, _ := tm.DoCase()
+	return r1
 }

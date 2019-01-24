@@ -56,6 +56,9 @@ func nCols(pdf *gopdf.GoPdf, tm []string, textWidth int) (nCol int, colWidth int
 	maxStr := maxString(tm)
 	textLen, _ := pdf.MeasureTextWidth(maxStr)
 	nCol = textWidth / int(textLen)
+	if nCol <= 0 {
+		nCol = 1
+	}
 	colWidth = textWidth / nCol
 	return
 }

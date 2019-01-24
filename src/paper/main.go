@@ -36,7 +36,7 @@ func main() {
 	flag.BoolVar(&help, "h", false, "show this help")
 	flag.IntVar(&nOpd, "n", 2, "number of operands")
 	flag.IntVar(&maxOpd, "m", 10, "max sum")
-	flag.IntVar(&maxAdder, "a", 10, "max adder")
+	flag.IntVar(&maxAdder, "a", 0, "max adder")
 	flag.StringVar(&opr, "o", "+", "operators, e.g. +++-*/")
 	flag.IntVar(&total, "t", 100, "total test case")
 	flag.StringVar(&fname, "f", "kousuan.pdf", "output pdf file name")
@@ -58,9 +58,17 @@ func main() {
 		ErrExit("%v", err)
 	}
 
-	result := tm.DoCase()
+	result, r2 := tm.DoCase()
 
 	printpdf(result, caption, fname)
+
+	answerfn := fname
+	if len(fname) >= 4 && fname[len(fname)-4] == '.' {
+		answerfn = fname[:len(fname)-4]
+	}
+	answerfn = answerfn + "_answer.pdf"
+
+	printpdf(r2, caption, answerfn)
 
 	for k, v := range tm.opCount {
 		fmt.Printf("  %c: %d\n", k, v)
