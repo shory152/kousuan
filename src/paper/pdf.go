@@ -13,9 +13,12 @@ type color struct{ r, g, b uint8 }
 func (c color) RGB() (uint8, uint8, uint8) { return c.r, c.g, c.b }
 
 var (
-	textLineBkColor1 color = color{r: 255, g: 250, b: 205}
-	textLineBkColor2 color = color{191, 239, 255} // LightBlue1
-	textLineBkColor3 color = color{240, 240, 240}
+	blackColor   color = color{0, 0, 0}
+	textBgColor1 color = color{r: 255, g: 250, b: 205}
+	textBgColor2 color = color{191, 239, 255} // LightBlue1
+	textBgColor3 color = color{240, 240, 240}
+	textColor1   color = blackColor
+	lineColor    color = blackColor
 )
 
 const (
@@ -118,38 +121,54 @@ func printpdf(tm []string, hdrText string, fname string) {
 
 	//x := textOffX
 	y := pdf.GetY()
-	nPage := 1
+	nPage := 0
+	nRowInPg := 0
+	nColInRow := 0
 	nCol, colWidth := nCols(pdf, tm, int(textAreaWidth))
 	for i, val := range tm {
+		if i == 0 {
+			nPage = 1
+			nRowInPg = 1
+			nColInRow = 1
+		} else {
+			nColInRow++
+		}
 
 		// draw bgcolor
-		if i%nCol == 0 {
-			r, g, b := textLineBkColor3.RGB()
-			if i%2 == 0 {
-				pdf.SetLineWidth(textInterval)
-				pdf.SetStrokeColor(r, g, b)
-				pdf.Line(headerLineOffX, y+5, headerLineOffX+lineWidth, y+5)
-				// restore line width and stroke color
-				pdf.SetLineWidth(1)
-				pdf.SetStrokeColor(0, 0, 0)
-			}
+		if nColInRow == 1 && nRowInPg%2 == 1 {
+			pdf.SetLineWidth(textInterval)
+			pdf.SetStrokeColor(textBgColor3.RGB())
+			//fmt.Printf("   (%f,%f): %d, %d, %d\n", headerLineOffX, y+5, i, nCol, (i%nCol)*colWidth)
+			pdf.Line(headerLineOffX, y+5, headerLineOffX+lineWidth, y+5)
+			// restore line width and stroke color
+			pdf.SetLineWidth(1)
+			pdf.SetStrokeColor(lineColor.RGB())
+			pdf.SetTextColor(textColor1.RGB())
 		}
 
 		// draw text
 		pdf.SetX(textOffX + float64((i%nCol)*colWidth))
 		pdf.SetY(y)
-
+		//fmt.Printf("(%f,%f): %d, %d, %d\n", pdf.GetX(), pdf.GetY(), i, nCol, (i%nCol)*colWidth)
 		pdf.Cell(nil, val)
 
+		// no more cell ?
 		if i+1 == len(tm) {
 			break
 		}
 
-		if (i+1)%nCol == 0 {
+		// new row
+		if nColInRow == nCol {
+			nRowInPg++
+			nColInRow = 0
 			y += textInterval
+			// new page
 			if y > textOverFlow {
 				printTail(pdf, nPage)
 				nPage++
+				nRowInPg = 1
+				nColInRow = 0
+
 				pdf.AddPage()
 				printHeader(pdf, hdrText)
 				y = pdf.GetY()

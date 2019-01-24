@@ -35,6 +35,7 @@ type MyCase struct {
 	total      int
 	maxOperand int
 	minOperand int
+	opCount    map[rune]int
 }
 
 func (tm *MyCase) AddOperator(op rune) error {
@@ -57,6 +58,16 @@ func (tm *MyCase) AddOperatorStr(opstr string) error {
 func (tm *MyCase) SetNumberOfOperand(n int) { tm.nOperand = n }
 func (tm *MyCase) SetNumberOfCase(n int)    { tm.total = n }
 func (tm *MyCase) SetMaxOperand(n int)      { tm.maxOperand = n }
+func (tm *MyCase) CountOp(op rune) {
+	if tm.opCount == nil {
+		tm.opCount = make(map[rune]int)
+	}
+	if n, ok := tm.opCount[op]; ok {
+		tm.opCount[op] = n + 1
+	} else {
+		tm.opCount[op] = 1
+	}
+}
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -115,6 +126,7 @@ func (tm *MyCase) DoCase() []string {
 				continue
 			}
 			op := tm.op[rand.Intn(len(tm.op))]
+			tm.CountOp(op)
 			switch op {
 			case OP_ADD:
 				maxOpd = tm.maxOperand - allOpd

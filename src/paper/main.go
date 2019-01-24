@@ -57,4 +57,8 @@ func main() {
 	result := tm.DoCase()
 
 	printpdf(result, caption, fname)
+
+	for k, v := range tm.opCount {
+		fmt.Printf("  %c: %d\n", k, v)
+	}
 }
