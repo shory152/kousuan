@@ -8,7 +8,8 @@ import (
 
 func usage() {
 	fmt.Println()
-	fmt.Printf("kousuan -n NumOfOperand -m MaxOperand -o oprator -t total -c caption -f filename.pdf")
+	fmt.Printf("paper -n NumOfOperand -m MaxSum -a MaxAdder -o oprator \n")
+	fmt.Printf("       -t total -c caption -f filename.pdf")
 	fmt.Println()
 
 	flag.PrintDefaults()
@@ -25,6 +26,7 @@ func ErrExit(format string, args ...interface{}) {
 func main() {
 	var nOpd int
 	var maxOpd int
+	var maxAdder int
 	var opr string
 	var total int
 	var fname string
@@ -33,8 +35,9 @@ func main() {
 
 	flag.BoolVar(&help, "h", false, "show this help")
 	flag.IntVar(&nOpd, "n", 2, "number of operands")
-	flag.IntVar(&maxOpd, "m", 10, "max operand")
-	flag.StringVar(&opr, "o", "+", "operators, e.g. +-*/")
+	flag.IntVar(&maxOpd, "m", 10, "max sum")
+	flag.IntVar(&maxAdder, "a", 10, "max adder")
+	flag.StringVar(&opr, "o", "+", "operators, e.g. +++-*/")
 	flag.IntVar(&total, "t", 100, "total test case")
 	flag.StringVar(&fname, "f", "kousuan.pdf", "output pdf file name")
 	flag.StringVar(&caption, "c", "test", "pdf document's caption")
@@ -47,6 +50,7 @@ func main() {
 
 	var tm MyCase
 	tm.SetMaxOperand(maxOpd)
+	tm.SetMaxAdder(maxAdder)
 	tm.SetNumberOfOperand(nOpd)
 	tm.SetNumberOfCase(total)
 

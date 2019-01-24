@@ -29,13 +29,13 @@ var op_print map[rune]rune = map[rune]rune{
 }
 
 type MyCase struct {
-	op         []rune
-	nOperand   int
-	nBrace     int
-	total      int
-	maxOperand int
-	minOperand int
-	opCount    map[rune]int
+	op       []rune
+	nOperand int
+	nBrace   int
+	total    int
+	maxSum   int
+	maxAdder int
+	opCount  map[rune]int
 }
 
 func (tm *MyCase) AddOperator(op rune) error {
@@ -57,7 +57,8 @@ func (tm *MyCase) AddOperatorStr(opstr string) error {
 
 func (tm *MyCase) SetNumberOfOperand(n int) { tm.nOperand = n }
 func (tm *MyCase) SetNumberOfCase(n int)    { tm.total = n }
-func (tm *MyCase) SetMaxOperand(n int)      { tm.maxOperand = n }
+func (tm *MyCase) SetMaxOperand(n int)      { tm.maxSum = n }
+func (tm *MyCase) SetMaxAdder(n int)        { tm.maxAdder = n }
 func (tm *MyCase) CountOp(op rune) {
 	if tm.opCount == nil {
 		tm.opCount = make(map[rune]int)
@@ -113,53 +114,77 @@ func (tm *MyCase) DoCase() []string {
 	var result []string
 	for i := 0; i < tm.total; i++ {
 		row := ""
-		maxOpd := tm.maxOperand
+		maxOpd := tm.maxSum
 		allOpd := 0
 		lastOpd := 0
 		_ = lastOpd
+		nextOp := '.'
 		for j := 0; j < tm.nOperand; j++ {
 			if j == 0 {
-				opd := rand.Intn(maxOpd)
+				// first number
+				nextOp = tm.op[rand.Intn(len(tm.op))]
+				opd := rand.Intn(tm.maxSum + 1)
+				switch nextOp {
+				case OP_ADD, OP_MUL:
+					if tm.maxAdder > 0 {
+						opd = rand.Intn(tm.maxAdder + 1)
+					}
+				}
 				row += fmt.Sprintf("%-2d ", opd)
 				allOpd = opd
 				lastOpd = opd
 				continue
 			}
-			op := tm.op[rand.Intn(len(tm.op))]
+
+			// next number
+			op := nextOp
 			tm.CountOp(op)
 			switch op {
 			case OP_ADD:
-				maxOpd = tm.maxOperand - allOpd
-				if maxOpd <= 0 {
-					maxOpd = 1
+				maxOpd = tm.maxSum - allOpd
+				if maxOpd < 0 {
+					maxOpd = 0
 				}
-				opd2 := rand.Intn(maxOpd)
+				if tm.maxAdder > 0 && maxOpd > tm.maxAdder {
+					maxOpd = tm.maxAdder
+				}
+				opd2 := rand.Intn(maxOpd + 1)
 				row += fmt.Sprintf("%c %-2d ", op_print[OP_ADD], opd2)
 				allOpd += opd2
-				continue
+				lastOpd = opd2
+
 			case OP_SUB:
 				maxOpd = allOpd
-				if maxOpd <= 0 {
-					maxOpd = 1
+				if maxOpd < 0 {
+					maxOpd = 0
 				}
-				opd2 := rand.Intn(maxOpd)
+				opd2 := rand.Intn(maxOpd + 1)
 				row += fmt.Sprintf("%c %-2d ", op_print[OP_SUB], opd2)
 				allOpd -= opd2
+				lastOpd = opd2
+
 			case OP_MUL:
 				if allOpd == 0 {
-					maxOpd = tm.maxOperand
+					maxOpd = tm.maxSum
 				} else {
-					maxOpd = tm.maxOperand / allOpd
+					maxOpd = tm.maxSum / allOpd
 				}
-				if maxOpd <= 0 {
-					maxOpd = 1
+				if maxOpd < 0 {
+					maxOpd = 0
 				}
-				opd2 := rand.Intn(maxOpd)
+				if tm.maxAdder > 0 && maxOpd > tm.maxAdder {
+					maxOpd = tm.maxAdder
+				}
+
+				opd2 := rand.Intn(maxOpd + 1)
 				row += fmt.Sprintf("%c %-2d ", op_print[OP_MUL], opd2)
 				if opd2 != 0 {
 					allOpd /= opd2
 				}
+				lastOpd = opd2
 			}
+
+			nextOp = tm.op[rand.Intn(len(tm.op))]
 		}
 		row += fmt.Sprintf(" %c      ", op_print['='])
 

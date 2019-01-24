@@ -7,7 +7,7 @@ import (
 
 func Test1(t *testing.T) {
 	var tm MyCase
-	tm.maxOperand = 20
+	tm.maxSum = 20
 	tm.nOperand = 2
 	tm.total = 1000
 	tm.op = append(tm.op, OP_ADD)
@@ -23,7 +23,7 @@ func Test1(t *testing.T) {
 
 func Test2(t *testing.T) {
 	var tm MyCase
-	tm.maxOperand = 20
+	tm.maxSum = 20
 	tm.nOperand = 3
 	tm.total = 1000
 	tm.op = append(tm.op, OP_ADD)
@@ -37,7 +37,7 @@ func Test2(t *testing.T) {
 
 func Test3(t *testing.T) {
 	var tm MyCase
-	tm.maxOperand = 20
+	tm.maxSum = 20
 	tm.nOperand = 4
 	tm.total = 200
 	tm.op = append(tm.op, OP_ADD)
