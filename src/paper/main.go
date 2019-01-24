@@ -16,6 +16,12 @@ func usage() {
 	os.Exit(0)
 }
 
+func ErrExit(format string, args ...interface{}) {
+	fmt.Fprintf(os.Stderr, format, args...)
+	fmt.Println()
+	usage()
+}
+
 func main() {
 	var nOpd int
 	var maxOpd int
@@ -39,17 +45,16 @@ func main() {
 		usage()
 	}
 
-	var tm timu
-	tm.maxOperand = maxOpd
-	tm.nOperand = nOpd
-	tm.total = total
-	for _, c := range opr {
-		if validOp[c] {
-			tm.op = append(tm.op, c)
-		}
+	var tm MyCase
+	tm.SetMaxOperand(maxOpd)
+	tm.SetNumberOfOperand(nOpd)
+	tm.SetNumberOfCase(total)
+
+	if err := tm.AddOperatorStr(opr); err != nil {
+		ErrExit("%v", err)
 	}
 
-	result := chuti(&tm)
+	result := tm.DoCase()
 
 	printpdf(result, caption, fname)
 }

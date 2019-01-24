@@ -8,6 +8,16 @@ import (
 
 var _ = gopdf.GoPdf{}
 
+type color struct{ r, g, b uint8 }
+
+func (c color) RGB() (uint8, uint8, uint8) { return c.r, c.g, c.b }
+
+var (
+	textLineBkColor1 color = color{r: 255, g: 250, b: 205}
+	textLineBkColor2 color = color{191, 239, 255} // LightBlue1
+	textLineBkColor3 color = color{240, 240, 240}
+)
+
 const (
 	A4PageWidth    float64 = 595.28
 	A4PageHight    float64 = 841.89
@@ -91,7 +101,7 @@ func getFontPath(fname string) string {
 	return "../font/" + fname
 }
 
-func printpdf(tm []string, title string, fname string) {
+func printpdf(tm []string, hdrText string, fname string) {
 	pdfConf := gopdf.Config{}
 	pdfConf.PageSize = A4Rect()
 	pdf := &gopdf.GoPdf{}
@@ -104,7 +114,6 @@ func printpdf(tm []string, title string, fname string) {
 
 	pdf.AddPage()
 
-	hdrText := title
 	printHeader(pdf, hdrText)
 
 	//x := textOffX
@@ -113,11 +122,28 @@ func printpdf(tm []string, title string, fname string) {
 	nCol, colWidth := nCols(pdf, tm, int(textAreaWidth))
 	for i, val := range tm {
 
+		// draw bgcolor
+		if i%nCol == 0 {
+			r, g, b := textLineBkColor3.RGB()
+			if i%2 == 0 {
+				pdf.SetLineWidth(textInterval)
+				pdf.SetStrokeColor(r, g, b)
+				pdf.Line(headerLineOffX, y+5, headerLineOffX+lineWidth, y+5)
+				// restore line width and stroke color
+				pdf.SetLineWidth(1)
+				pdf.SetStrokeColor(0, 0, 0)
+			}
+		}
+
+		// draw text
 		pdf.SetX(textOffX + float64((i%nCol)*colWidth))
 		pdf.SetY(y)
 
-		//fmt.Printf("%d:%d: %f, %f\n", i, ((i + 1) % nCol), pdf.GetX(), pdf.GetY())
 		pdf.Cell(nil, val)
+
+		if i+1 == len(tm) {
+			break
+		}
 
 		if (i+1)%nCol == 0 {
 			y += textInterval

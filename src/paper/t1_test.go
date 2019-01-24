@@ -6,7 +6,7 @@ import (
 )
 
 func Test1(t *testing.T) {
-	var tm timu
+	var tm MyCase
 	tm.maxOperand = 20
 	tm.nOperand = 2
 	tm.total = 1000
@@ -22,7 +22,7 @@ func Test1(t *testing.T) {
 }
 
 func Test2(t *testing.T) {
-	var tm timu
+	var tm MyCase
 	tm.maxOperand = 20
 	tm.nOperand = 3
 	tm.total = 1000
@@ -36,7 +36,7 @@ func Test2(t *testing.T) {
 }
 
 func Test3(t *testing.T) {
-	var tm timu
+	var tm MyCase
 	tm.maxOperand = 20
 	tm.nOperand = 4
 	tm.total = 200

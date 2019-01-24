@@ -28,7 +28,7 @@ var op_print map[rune]rune = map[rune]rune{
 	'=':    '＝',
 }
 
-type timu struct {
+type MyCase struct {
 	op         []rune
 	nOperand   int
 	nBrace     int
@@ -36,6 +36,27 @@ type timu struct {
 	maxOperand int
 	minOperand int
 }
+
+func (tm *MyCase) AddOperator(op rune) error {
+	if !validOp[op] {
+		return fmt.Errorf("invalid operator: %c", op)
+	}
+	tm.op = append(tm.op, op)
+	return nil
+}
+
+func (tm *MyCase) AddOperatorStr(opstr string) error {
+	for _, op := range opstr {
+		if err := tm.AddOperator(op); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (tm *MyCase) SetNumberOfOperand(n int) { tm.nOperand = n }
+func (tm *MyCase) SetNumberOfCase(n int)    { tm.total = n }
+func (tm *MyCase) SetMaxOperand(n int)      { tm.maxOperand = n }
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -77,18 +98,20 @@ func sub(n int, max int) string {
 	return result
 }
 
-func chuti(tm *timu) []string {
+func (tm *MyCase) DoCase() []string {
 	var result []string
-	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < tm.total; i++ {
 		row := ""
 		maxOpd := tm.maxOperand
 		allOpd := 0
+		lastOpd := 0
+		_ = lastOpd
 		for j := 0; j < tm.nOperand; j++ {
 			if j == 0 {
 				opd := rand.Intn(maxOpd)
 				row += fmt.Sprintf("%-2d ", opd)
 				allOpd = opd
+				lastOpd = opd
 				continue
 			}
 			op := tm.op[rand.Intn(len(tm.op))]
@@ -110,6 +133,20 @@ func chuti(tm *timu) []string {
 				opd2 := rand.Intn(maxOpd)
 				row += fmt.Sprintf("%c %-2d ", op_print[OP_SUB], opd2)
 				allOpd -= opd2
+			case OP_MUL:
+				if allOpd == 0 {
+					maxOpd = tm.maxOperand
+				} else {
+					maxOpd = tm.maxOperand / allOpd
+				}
+				if maxOpd <= 0 {
+					maxOpd = 1
+				}
+				opd2 := rand.Intn(maxOpd)
+				row += fmt.Sprintf("%c %-2d ", op_print[OP_MUL], opd2)
+				if opd2 != 0 {
+					allOpd /= opd2
+				}
 			}
 		}
 		row += fmt.Sprintf(" %c      ", op_print['='])
@@ -118,4 +155,8 @@ func chuti(tm *timu) []string {
 	}
 
 	return result
+}
+
+func chuti(tm *MyCase) []string {
+	return tm.DoCase()
 }
