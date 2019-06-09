@@ -215,7 +215,7 @@ func (tm *MyCase) DoCase() ([]string, []string) {
 		}
 
 		r2 := row
-		row += fmt.Sprintf(" %c      ", op_print['='])
+		row += fmt.Sprintf(" %c        ", op_print['='])
 		r2 += fmt.Sprintf(" %c %-5d", op_print['='], allOpd)
 
 		result = append(result, row)

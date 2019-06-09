@@ -17,6 +17,7 @@ var (
 	textBgColor1 color = color{r: 255, g: 250, b: 205}
 	textBgColor2 color = color{191, 239, 255} // LightBlue1
 	textBgColor3 color = color{240, 240, 240}
+	textBgColor4 color = color{r: 0xff, g: 0xe4, b: 0xc4}
 	textColor1   color = blackColor
 	lineColor    color = blackColor
 )
@@ -140,7 +141,7 @@ func printpdf(tm []string, hdrText string, fname string) {
 		// draw bgcolor
 		if nColInRow == 1 && nRowInPg%2 == 1 {
 			pdf.SetLineWidth(textInterval)
-			pdf.SetStrokeColor(textBgColor3.RGB())
+			pdf.SetStrokeColor(textBgColor4.RGB())
 			//fmt.Printf("   (%f,%f): %d, %d, %d\n", headerLineOffX, y+5, i, nCol, (i%nCol)*colWidth)
 			pdf.Line(headerLineOffX, y+5, headerLineOffX+lineWidth, y+5)
 			// restore line width and stroke color
